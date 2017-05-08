@@ -1,0 +1,53 @@
+<div id="package" class="package-window">
+    <div class="layout">
+        <div class="layout__item lap-and-up-1/3">
+            <img class="package-window__img" src="{{ package.image.url }}" alt="{{ package.name }}">
+        </div>
+        <div class="layout__item lap-and-up-2/3">
+            <div class="package-window__body">
+                <div class="package-window__content">
+                    <h2>{{ package.name }}</h2>
+                    <p>{{ package.description|raw }}</p>
+                </div>
+                <div class="package-window__buy">
+                    <span class="package-window__price">
+                        {% if package.purchasable == false %}
+                            {{ lang("package.disabled") }}
+                        {% elseif package.customPrice %}
+                            {{ lang("package.customPrice") }}
+                        {% elseif package.price == 0.00 %}
+                            {{ lang("package.free") }}
+                        {% else %}
+                            {% if package.discount.applied %}
+                                <span class="price-discount">{{ package.discount.original|money }}</span>
+                            {% endif %}
+                            {{ package.price|money }} {{ basket.currency }}
+                        {% endif %}
+                    </span>
+
+                    {% if package.purchasable %}
+                        {% if package.basket %}
+                            <a href="/checkout/packages/remove/{{ package.id }}" class="btn btn--remove">
+                                <i class="fa fa-times"></i>
+                                {{ lang("button.remove") }}
+                            </a>
+                        {% else %}
+                            {% if package.type != "single" %}
+                                <a href="/checkout/packages/add/{{ package.id }}/subscription" class="btn">
+                                    <i class="fa fa-cart-plus"></i>
+                                    {{ lang("button.subscribe") }}
+                                </a>
+                            {% endif %}
+                            {% if package.type != "subscription" %}
+                                <a href="/checkout/packages/add/{{ package.id }}/single" class="btn">
+                                    <i class="fa fa-cart-plus"></i>
+                                    {{ lang("button.add") }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

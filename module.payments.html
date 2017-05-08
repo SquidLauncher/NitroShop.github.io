@@ -1,0 +1,41 @@
+<section class="page-side__section">
+    <h2 class="page-side__header">
+        {{ module.header }}
+    </h2>
+
+    <ul class="payments">
+        {% for payment in module.payments %}
+            <li class="media payments__item">
+                <div class="media__img payments__avatar">
+                    <img src="//cravatar.eu/helmhead/{{ payment.ign }}/48">
+                </div>
+                <div class="media__body payments__info">
+                    <div class="payments__main">
+                        <span class="payments__ign">
+                            {{ payment.ign }}
+                        </span>
+                        {% if module.displayTime %}
+                            <span class="payments__time">
+                                <i class="fa fa-clock-o"></i>
+                                {{ payment.time }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="payments__extra">
+                        {% if module.displayPackage %}
+                            {{ payment.name[:20] }}
+                        {% endif %}
+                        {% if module.displayPackage and module.displayPrice %}
+                            &bull;
+                        {% endif %}
+                        {% if module.displayPrice %}
+                            {{ payment.price|money }} {{ payment.currency }}
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+        {% else %}
+            {{ lang("module.payments.empty") }}
+        {% endfor %}
+    </ul>
+</section>

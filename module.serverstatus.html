@@ -1,0 +1,24 @@
+{% if module.display %}
+    <section class="page-side__section">
+        <h2 class="page-side__header">
+            {{ module.header }}
+            {% if module.online %}
+                <span class="status status--online">Online</span>
+            {% else %}
+                <span class="status status--offline">Offline</span>
+            {% endif %}
+        </h2>
+
+        <div class="server">
+            <span class="server__ip">{{ module.ip }}{% if module.port != 25565 %}:{{ module.port }}{% endif %}</span>
+            <p class="server__players">
+                {% if module.online %}
+                  {{ module.players.online }} / {{ module.players.max }}
+                {% else %}
+                  0/0
+                {% endif %}
+                players online.
+            </p>
+        </div>
+    </section>
+{% endif %}

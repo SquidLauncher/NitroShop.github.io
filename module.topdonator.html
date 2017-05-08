@@ -1,0 +1,37 @@
+<section class="page-side__section">
+    <h2 class="page-side__header">
+        {{ module.header }}
+    </h2>
+
+    {% if module.donor %}
+        <div class="donator media">
+            <div class="donator__avatar media__img">
+                <span class="mc-skin" data-minecraft-username="{{ module.ign }}"></span>
+            </div>
+            <div class="donator__info media__body">
+                <div class="donator__ign">{{ module.ign }}</div>
+                <div class="donator__amount">
+                    {% if module.displayAmount %}
+                        Donated {{ module.total|money }} {{ store.currency }}
+                    {% else %}
+                        Donated the most 
+                    {% endif %}
+
+                    {% if module.period == "hourly" %}
+                        this hour.
+                    {% elseif module.period == "daily" %}
+                        today.
+                    {% elseif module.period == "monthly" %}
+                        this month.
+                    {% elseif module.period == "yearly" %}
+                        this year.
+                    {% else %}
+                        this week.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        No recent top donator to display.
+    {% endif %}
+</section>

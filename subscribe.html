@@ -1,0 +1,266 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <h1 class="main-heading">
+        {{ lang("title.basket.checkout") }}
+    </h1>
+    <form method="post" action="/checkout/update">
+        <div class="table-wrap">
+            <table class="checkout table">
+                <thead class="table__head">
+                    <tr class="table__row">
+                        <th class="checkout__name">{{ lang("basket.package.name") }}</th>
+                        <th class="checkout__price">{{ lang("basket.package.price") }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="table__body">
+                    {% for package in basket.packages %}
+                        <tr class="table__row">
+                            <td class="checkout__name">
+                                <a href="/checkout/packages/remove/{{ basket.packages[0].id }}" class="checkout__remove">
+                                    <i class="fa fa-times"></i>
+                                    <span class="accessibility">{{ lang("button.remove")}}</span>
+                                </a>
+                                <a href="/package/{{ basket.packages[0].id }}" data-featherlight="ajax">{{ basket.packages[0].name }}</a>
+                            </td>
+                            <td class="checkout__price">
+                                {{ basket.packages[0].price|money }} <small>{{ basket.currency }}</small> every {{ basket.packages[0].expiryPeriod }}
+                            </td>
+                            <td class="checkout__update">
+                                <button class="btn">{{ lang("button.update") }}</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <div class="checkout-total">
+        <span class="subtitle">
+            {{ lang("basket.total") }}
+        </span>
+        <span class="price">
+            {{ basket.price|money }} {{ basket.currency }}
+        </span>
+    </div>
+
+    <div class="coupons">
+        <h2>{{ lang("basket.coupons.header") }}</h2>
+        <div class="layout">
+            <div class="layout__item lap-and-up-1/2">
+                <form method="post" action="/checkout/coupons/add">
+                    <div class="text-submit redeem-coupon">
+                        <label for="coupon" class="accessibility">{{ lang('basket.coupons.placeholder') }}</label>
+                        <input id="coupon" name="coupon" type="text" class="text-input" placeholder="{{ lang('basket.coupons.placeholder') }}">
+                        <button class="btn">
+                            {{ lang("button.redeem") }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+    
+            <div class="layout__item lap-and-up-1/2">
+                {% if basket.coupons|length > 0 %}
+                    <div class="table-wrap">
+                        <table class="table">
+                            <tbody>
+                                {% for coupon in basket.coupons %}
+                                    <tr class="table__row">
+                                        <td>
+                                            <a href="/checkout/coupons/remove/{{ coupon.code }}" class="checkout__remove">
+                                                <i class="fa fa-times"></i>
+                                                <span class="accessibility">{{ lang("button.remove")}}</span>
+                                            </a>
+                                            {{ coupon.code }}
+                                        </td>
+                                        <td>{{ coupon.description }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="purchase">
+        <form method="post" action="{% if basket.price > 0 %}/checkout/pay{% else %}/checkout/free{% endif %}" {% if basket.price > 0 %}class="gateway"{% endif %}>
+
+            <input type="hidden" name="type" value="single">
+
+            {% if checkout.gateways|length > 0 and basket.price > 0 %}
+                <div class="page-header">
+                    <h2>Payment method</h2>
+                </div>
+
+                <div class="gateways">
+                    <div class="layout">
+                        {% for gateway in checkout.gateways %}
+                            <div class="layout__item lap-and-up-1/2">
+                                <div class="radio">
+                                    <input type="radio" name="gateway" id="gateway[{{ gateway.id }}]" value="{{ gateway.id }}" {% if checkout.gateways|length == 1 %} checked="checked" {% endif %} data-id="{{ gateway.gateway }}">
+                                    <label for="gateway[{{ gateway.id }}]">
+                                        <img src="/templates/209/img/gateways/{{ gateway.gateway }}.png"> 
+                                        {{ gateway.name }} 
+                                        {% if gateway.offset != 0 %}
+                                            ({% if gateway.offset > 0 %}+{% endif %}{{ gateway.offset|money }} <small>{{ basket.currency }}</small>)
+                                        {% endif %} 
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if checkout.requestAddress %}
+                <h2>Your details</h2>
+                <div class="details">
+                    <div class="layout">
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="address_name">Full Name</label>
+                            <input type="text" id="address_name" name="address_name" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="email">Email address</label>
+                            <input type="text" id="email" name="email" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="address_line_1">Address Line 1</label>
+                            <input type="text" id="address_line_1" name="address_line_1" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="address_line_2">Address Line 2</label>
+                            <input type="text" id="address_line_2" name="address_line_2" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="address_city">City</label>
+                            <input type="text" id="address_city" name="address_city" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="address_zip">Zip Code</label>
+                            <input type="text" id="address_zip" name="address_zip" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="stateselect">State/Region</label>
+                            <input type="text" name="address_state" id="stateselect" class="text-input">
+                        </div>
+                        <div class="layout__item lap-and-up-1/2">
+                            <label for="address_country">Country</label>
+                            <div class="select-wrap">
+                                <select id="address_country" name="address_country">
+                                    <option value="">Select a country</option>
+                                    {% for country in checkout.countries %}
+                                    <option value="{{ country.id }}">{{ country.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="card-container details">
+                <div class="page-header">
+                    <h2>Card details</h2>
+                </div>
+
+                <div class="layout">
+                    <div class="layout__item lap-and-up-1/2">
+                        <div class="layout">
+                            <div class="layout__item desk-3/4">
+                                <div class="number">
+                                    <div class="form-group">
+                                        <label for="card-number">Card number</label>
+                                        <input id="card-number" type="text" class="text-input" placeholder="4242 4242 4242 4242">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layout__item desk-1/4">
+                                <div class="cvc">
+                                    <div class="form-group">
+                                        <label for="card-cvc">CVC <a href="http://www.cvvnumber.com/cvv.html" target="_blank" style="font-size:10px">(?)</a></label>
+                                        <input id="card-cvc" type="text" class="text-input" placeholder="123">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layout">
+                    <div class="layout__item lap-and-up-1/2">
+                        <div class="layout">
+                            <div class="layout__item desk-3/4">
+                                <label for="card-month ">Expiry month</label>
+                                <div class="select-wrap">
+                                    <select id="card-month" class="text-input">
+                                        <option value='01'>01 - January</option>
+                                        <option value='02'>02 - February</option>
+                                        <option value='03'>03 - March</option>
+                                        <option value='04'>04 - April</option>
+                                        <option value='05'>05 - May</option>
+                                        <option value='06'>06 - June</option>
+                                        <option value='07'>07 - July</option>
+                                        <option value='08'>08 - August</option>
+                                        <option value='09'>09 - September</option>
+                                        <option value='10'>10 - October</option>
+                                        <option value='11'>11 - November</option>
+                                        <option value='12'>12 - December</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layout__item desk-1/4">
+                                <label for="card-year">Expiry year</label>
+                                <div class="select-wrap">
+                                    <select id="card-year" class="text-input">
+                                        {% for year in checkout.expiryYears %}
+                                            <option value="{{ year }}">{{ year }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tax"></div>
+            <h2>{{ lang("basket.purchase.header") }}</h2>
+
+            {% if checkout.gateways|length > 0 %}
+
+                <div class="layout">
+                    <div class="layout__item lap-and-up-1/2">
+                        <div class="terms">
+                            <input type="checkbox" id="agreement" name="agreement" value="true">
+                            <label for="agreement">{{ lang("basket.purchase.terms", '<a href="/terms/" data-featherlight="ajax">', '</a>')|raw }}</label>
+                        </div>
+                    </div>
+                    <div class="layout__item lap-and-up-1/2">
+                        <div class="basket-checkout">
+                            {% if basket.price > 0 %}
+                                <button type="submit" class="btn btn--large" data-loading-text="Loading, please wait...">Purchase</button>
+                            {% else %}
+                                <button type="submit" class="btn btn--large" data-loading-text="Loading, please wait...">Claim for free</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            {% else %}
+                <h5>You need to setup a <a href="http://server.buycraft.net/gateways" target="_blank">payment gateway</a> in your control panel before players can donate.</h5>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if checkout.kount %}
+        <iframe width="1" height="1" frameborder="0" scrolling="no" src="{{ checkout.kount.url|raw }}">
+            <img width="1" height="1" src="{{ checkout.kount.gif|raw }}">    
+        </iframe>
+    {% endif %}
+
+{% endblock %}

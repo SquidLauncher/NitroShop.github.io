@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="layout">
+        <div class="layout__item lap-and-up-7/10">
+            <main class="page-main">
+                <h1 class="main-heading">{{ category.name }}</h1>
+                {% if category.description != "" %}
+                    <p class="main-desc">{{ category.description|raw }}</p>
+                {% endif %}
+
+                {% if category.packages|length > 0 %}
+                    {% if category.displayType == "list" %}
+                        <div class="table-wrap">
+                            <table class="table package-list">
+                                <tbody>
+                                    {% for package in category.packages %}
+                                        <tr class="table__row">
+                                            <td class="package-list__name">
+                                                <div class="package-list__img">
+                                                    <img src="{{ package.image.url }}" alt="">
+                                                </div>
+                                                <a href="/package/{{ package.id }}" data-featherlight="ajax">{{ package.name }}</a>
+                                            </td>
+                                            <td class="package-list__price">
+                                                {% if package.customPrice == false and package.price > 0 %}
+                                                    {% if package.discount.applied %}
+                                                        <span class="price-discount">{{ package.discount.original|money }}</span>
+                                                    {% endif %}
+                                                    {{ package.price|money }} {{ basket.currency }}
+                                                {% endif %}
+                                            </td>
+                                            <td class="package-list__buy">
+                                                {% if package.basket %}
+                                                    <a href="/checkout/packages/remove/{{ package.id }}" class="btn btn--remove">
+                                                        <i class="fa fa-times"></i>
+                                                        {{ lang("button.remove") }}
+                                                    </a>
+                                                {% else %}
+                                                    <a href="/package/{{ package.id }}" class="btn" data-featherlight="ajax">
+                                                        <i class="fa fa-cart-plus"></i>
+                                                        {{ lang("button.buy") }}
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="package-grid package-grid--3-column">
+                            <div class="layout">
+                                {% for package in category.packages %}
+                                    <div class="layout__item lap-and-up-1/2">
+                                        <div class="package">
+                                            <div class="package__img">
+                                                <a href="/package/{{ package.id }}" data-featherlight="ajax">
+                                                    <img src="{{ package.image.url }}" alt="">
+                                                </a>
+                                            </div>
+
+                                            <div class="package__info">
+                                                <a href="/package/{{ package.id }}" class="package__name" data-featherlight="ajax">
+                                                    {{ package.name }}
+                                                </a>
+                                                <span class="package__price">
+                                                    {% if package.customPrice == false and package.price > 0 %}
+                                                        {% if package.discount.applied %}
+                                                            <span class="price-discount">{{ package.discount.original|money }}</span>
+                                                        {% endif %}
+                                                        {{ package.price|money }} {{ basket.currency }}
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+
+                                            <div class="package__buy">
+                                                {% if package.basket %}
+                                                    <a href="/checkout/packages/remove/{{ package.id }}" title="{{ lang("button.remove") }}" class="btn btn--small btn--remove">
+                                                        <i class="fa fa-times"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a href="/package/{{ package.id }}" title="{{ lang("button.buy") }}" class="btn btn--small" data-featherlight="ajax">
+                                                        <i class="fa fa-cart-plus"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </main>
+        </div>
+
+        <div class="layout__item lap-and-up-3/10">
+            <aside class="page-side">
+                    {{ modules|raw }}
+            </aside>
+        </div>
+    </div>
+
+{% endblock %}

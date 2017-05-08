@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="layout">
+        <div class="layout__item lap-and-up-7/10">
+            <main class="page-main">
+                <h1 class="main-heading">
+                    {{ lang("title.payment.complete") }}
+                </h1>
+                <p>
+                     {{ lang("complete.header") }}
+                </p>
+                <p>
+                    {{ lang("complete.instructions") }}
+                </p>
+                <p>
+                    {{ lang("complete.help") }}
+                </p>
+            </main>
+        </div>
+
+        <div class="layout__item lap-and-up-3/10">
+            <aside class="page-side">
+                    {{ modules|raw }}
+            </aside>
+        </div>
+    </div>
+    
+{% endblock %}

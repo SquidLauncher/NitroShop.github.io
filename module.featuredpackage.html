@@ -1,0 +1,41 @@
+{% if module.display %}
+    <section class="page-side__section">
+        <h2 class="page-side__header">
+            {{ module.header }}
+        </h2>
+
+        <div class="package">
+            <div class="package__img">
+                <a href="/package/{{ module.package.id }}" data-featherlight="ajax">
+                    <img src="{{ module.package.image.url }}" alt="{{ module.package.name }}">
+                </a>
+            </div>
+
+            <div class="package__info">
+                <a href="/package/{{ module.package.id }}" class="package__name" data-featherlight="ajax">
+                    {{ module.package.name }}
+                </a>
+                <span class="package__price">
+                    {% if module.package.customPrice == false and module.package.price > 0 %}
+                        {% if module.package.discount.applied %}
+                            <span class="price-discount">{{ module.package.discount.original|money }}</span>
+                        {% endif %}
+                        {{ module.package.price|money }} {{ store.currency }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="package__buy">
+                {% if module.package.basket %}
+                    <a href="/checkout/packages/remove/{{ module.package.id }}" title="{{ lang("button.remove") }}" class="btn btn--small btn--remove">
+                        <i class="fa fa-times"></i>
+                    </a>
+                {% else %}
+                    <a href="/package/{{ module.package.id }}" title="{{ lang("button.buy") }}" class="btn btn--small" data-featherlight="ajax">
+                        <i class="fa fa-cart-plus"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endif %}

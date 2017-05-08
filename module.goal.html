@@ -1,0 +1,17 @@
+<section class="page-side__section">
+    <h2 class="page-side__header">
+        {{ module.header }}
+    </h2>
+
+    {% if module.displayAmount %}
+        <p class="text-center">{{ module.total }} / {{ module.target }} {{ store.currency }}</p>
+    {% endif %}
+
+    <div class="progress {% if module.bar.style == "striped" %}progress--striped{% endif %} {% if module.bar.animated %}progress--active{% endif %}">
+        <div class="progress__elapsed" style="width:{{ module.percentage }}%;">
+            <div class="progress__number">
+                {{ module.percentage }}%
+            </div>
+        </div>
+    </div>
+</section>

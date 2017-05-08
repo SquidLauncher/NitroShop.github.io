@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" class="preload">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="">
+
+    <title>{{ store.name }} | {{ page.title }}</title>
+
+    <link rel="icon" href="/assets/img/favicon.ico">
+    
+    <link rel="stylesheet" href="http://craftilldawn.com/buycraft/main.min.css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow:700">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway:400,200,700">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    {% if store.theme %}
+        <link href="/theme/style?cache={{ store.theme }}" rel="stylesheet">
+    {% endif %}
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body class="theme--turquoise">
+    <a href="#" class="touch-nav-toggle">
+        <span class="accessibility">Toggle navigation</span>
+        <i></i>
+    </a>
+
+    <ul class="touch-nav">
+        <li class="touch-nav__item {% if page.category == "index" %}touch-nav__item--active{% endif %}">
+            <a href="/">
+                {{ lang("category.home") }}
+            </a>
+        </li>
+        {% for category in store.categories %}
+            {% if category.subcategories|length > 0 %}
+                <li class="touch-nav__item {% if category.active %}touch-nav__item--active{% endif %}">
+                    <a href="#">
+                        {{ category.name }}
+                        <i class="fa fa-chevron-down"></i>
+                    </a>
+                    <ul>
+                        {% for subcategory in category.subcategories %}
+                            <li class="touch-nav__item">
+                                <a href="/category/{{ subcategory.id }}">
+                                    {{ subcategory.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% else %}
+                <li class="touch-nav__item {% if category.active %}touch-nav__item--active{% endif %}">
+                    <a href="/category/{{ category.id }}">
+                        {{ category.name }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div class="page">
+        <header class="page-head" style="background-image:url()">
+            <div class="top-bar">
+                <div class="wrapper">
+                    {% if basket.username %}
+                        <a href="/checkout/logout" class="logout" title="{{ lang("button.logout") }}">
+                            <i class="fa fa-power-off"></i>
+                        </a>
+                    {% endif %}
+
+                    <div class="menu menu--center menu--currency">
+                        <a href="#" class="btn btn--secondary btn--small menu__toggle">
+                            {{ basket.currency }}
+                            <i class="fa fa-chevron-down"></i>
+                        </a>
+
+                        <div class="menu__popup">
+                            <ul class="option-list">
+                                {% for currency in store.currencies %}
+                                    {% if currency.code in [store.currency, "AUD", "BRL", "CAD", "DKK", "EUR", "NOK", "NZD", "GBP", "SEK", "USD", "PLN"] %}
+                                        <li {% if basket.currency == currency.code %}class="option-list__active"{% endif %}>
+                                            <a href="?currency={{ currency.code }}">
+                                                {{ currency.code }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="menu menu--right menu--cart">
+                        {% if basket.packages|length > 0 %}
+                            <a href="/checkout/basket" class="btn btn--secondary btn--small menu__toggle">
+                                <span class="toggle__icon">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span class="cart-number">
+                                        {{ basket.packages|length }}
+                                    </span>
+                                </span>
+                                {{ basket.price|money }}
+                            </a>
+                            <div class="menu__popup">
+                                <ul class="cart">
+                                    {% for package in basket.packages %}
+                                        <li class="cart__item">
+                                            <a href="/checkout/packages/remove/{{ package.id }}" class="cart__remove">
+                                                <i class="fa fa-times"></i>
+                                                <span class="accessibility">{{ lang("button.remove") }}</span>
+                                            </a>
+                                            <a href="/package/{{ package.id }}" class="cart__name" data-featherlight="ajax">
+                                                {{ package.name[:25] }}
+                                            </a>
+                                            <span class="cart__price">
+                                                {{ package.price|money }} {{ basket.currency }}
+                                            </span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="/checkout/basket" class="btn menu--cart__checkout">
+                                    {{ lang("button.checkout") }}
+                                </a>
+                                <span class="menu--cart__total">
+                                    {{ basket.price|money }} {{ basket.currency }}
+                                </span>
+                            </div>
+                        {% else %}
+                            <a href="/checkout" class="btn btn--secondary btn--small btn--disabled menu__toggle" disabled>
+                                <span class="toggle__icon">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span class="cart-number">
+                                        0
+                                    </span>
+                                </span>
+                                {{ basket.price|money }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <div class="site-logo">
+                    {% if store.logo %}
+                        <img src="{{ store.logo }}" alt="{{ store.name }}">
+                    {% else %}
+                        <span>{{ store.name }}</span>
+                    {% endif %}
+                </div>
+
+                <ul class="site-nav">
+                    <li class="site-nav__item {% if page.category == "index" %}site-nav__item--active{% endif %}">
+                        <a href="/">
+                            {{ lang("category.home") }}
+                        </a>
+                    </li>
+
+                    {% for category in store.categories %}
+                        {% if category.subcategories|length > 0 %}
+                            <li class="site-nav__item {% if category.active %}site-nav__item--active{% endif %} menu menu--center">
+                                <a href="#" class="menu__toggle">
+                                    {{ category.name }}
+                                    <i class="fa fa-chevron-down"></i>
+                                </a>
+                                <ul class="menu__popup">
+                                    {% for subcategory in category.subcategories %}
+                                        <li>
+                                            <a href="/category/{{ subcategory.id }}">
+                                                {{ subcategory.name }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="site-nav__item {% if category.active %}site-nav__item--active{% endif %}">
+                                <a href="/category/{{ category.id }}">
+                                    {{ category.name }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </header>
+
+        <div class="wrapper wrapper--full">
+            <div class="page-body">
+                <div id="notification"></div>
+
+                {% block content %}{% endblock %}
+
+            </div>
+        </div>
+
+        <footer class="page-foot">
+            <div class="wrapper">
+                <div class="page-foot__options">
+                    <div class="page-foot__lang menu menu--top menu--center">
+                        <a href="" class="btn btn--small menu__toggle">
+                            <i class="fa fa-globe"></i>
+                            Language
+                        </a>
+                        <div class="menu__popup">
+                            <ul class="option-list">
+                                {% for language in store.languages %}
+                                  <li {% if basket.language == language.code %}class="option-list__active"{% endif %}><a href="?lang={{ language.code }}">{{ language.name }}</a></li>
+                              {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="theme-switch" class="page-foot__color menu menu--top menu--center">
+                        <a href="" class="btn btn--small menu__toggle">
+                            <i class="fa fa-paint-brush"></i>
+                            <span>Turquoise</span>
+                        </a>
+                        <div class="menu__popup">
+                            <ul class="option-list">
+                                <li>
+                                    <a data-color="red" href="#">Red</a>
+                                </li>
+                                <li>
+                                    <a data-color="orange" href="#">Orange</a>
+                                </li>
+                                <li>
+                                    <a data-color="yellow" href="#">Yellow</a>
+                                </li>
+                                <li>
+                                    <a data-color="lime" href="#">Lime</a>
+                                </li>
+                                <li>
+                                    <a data-color="green" href="#">Green</a>
+                                </li>
+                                <li>
+                                    <a data-color="turquoise" href="#">Turquoise</a>
+                                </li>
+                                <li>
+                                    <a data-color="blue" href="#">Blue</a>
+                                </li>
+                                <li>
+                                    <a data-color="indigo" href="#">Indigo</a>
+                                </li>
+                                <li>
+                                    <a data-color="purple" href="#">Purple</a>
+                                </li>
+                                <li>
+                                    <a data-color="pink" href="#">Pink</a>
+                                </li>
+                                <li>
+                                    <a data-color="gray" href="#">Gray</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="page-foot__toggle">
+                        <input id="light-dark-switch" type="checkbox">
+                        <label for="light-dark-switch">Night mode</label>
+                    </div>
+                </div>
+                <div class="page-foot__copy">
+                    Theme by <a href="http://craftilldawn.com">Craftilldawn</a>. Powered by <a href="http://buycraft.net">Buycraft</a>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    {% if store.plan == "1" %}
+        <div class="advertisement">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px;" data-ad-client="ca-pub-9830135219921132" data-ad-slot="7404819681"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    {% endif %}
+
+    {% if page.category == "checkout" %}
+      <script src="https://wallet.google.com/inapp/lib/buy.js"></script>
+      <script src="https://js.stripe.com/v2/"></script>
+    {% endif %}
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/templates/209/js/skin.min.js"></script>
+    <script src="http://craftilldawn.com/buycraft/main.min.js"></script>
+
+    {% if page.message.display %}
+        <script>
+            notification.show("{{ page.message.type }}", "{{ page.message.text }}");
+        </script>
+    {% endif %}
+
+</body>
+</html>

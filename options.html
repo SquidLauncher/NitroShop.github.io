@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="layout">
+        <div class="layout__item lap-and-up-7/10">
+            <main class="page-main">
+                <h1 class="main-heading">
+                    {{ options.package.name }}
+                </h1>
+                
+                <div class="variables">
+                    <form method="post">
+                        {% if options.package.chooseServer %}
+                            <div class="details">
+                                <label for="server">Please choose which server to receive this package upon</label>
+                                <div class="select-wrap">
+                                    <select class="text-input" id="server" name="server">
+                                        {% for server in options.servers %}
+                                            <option value="{{ server.id }}">{{ server.name }}</option>
+                                        {% endfor %}
+                                    </select>   
+                                </div>
+                            </div>
+                        {% endif %}
+    
+                        {% if options.package.customPrice %}
+                            <div class="details">
+                                <label for="price">{{ lang("package.options.price.placeholder") }}</label>
+                                <input type="text" id="price" name="price" class="text-input">
+                                <span class="input-currency"><small>{{ store.currency }}</small></span>
+                            </div>
+                        {% endif %}
+    
+                        {% for variable in options.variables %}
+                            {% if variable.type == "dropdown" %}
+                                <div class="details">
+                                    <label for="variables[{{ variable.id }}]">{{ variable.description }}</label>
+                                    <div class="select-wrap desk-1/2">
+                                        <select id="variables[{{ variable.id }}]" name="variables[{{ variable.id }}]" class="text-input">
+                                            {% for option in variable.options %}
+                                                <option value="{{ option.id }}">
+                                                    {{ option.name }}
+                                                    {% if option.price > 0 %}
+                                                        (+{{ option.price|money }} {{ basket.currency }})
+                                                    {% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>  
+                                    </div> 
+                                </div> 
+                            {% else %}
+                                <div class="details">
+                                    <label for="variables[{{ variable.id }}]">{{ variable.description }}</label>
+                                    <input type="text" id="variables[{{ variable.id }}]" name="variables[{{ variable.id }}]" class="text-input desk-1/2">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+    
+                        <div class="layout">
+                            <div class="layout__item 1/2 lap-and-up-1/3">
+                                <a href="/category/{{ options.package.category }}" class="btn btn--tertiary btn--block btn--large btn--gamma">
+                                    {{ lang("button.back") }}
+                                </a>
+                            </div>
+                            <div class="layout__item hide--palm lap-and-up-1/3"></div>
+                            <div class="layout__item 1/2 lap-and-up-1/3">
+                                <input type="submit" name="submit" class="btn btn--block btn--large btn--gamma" value="{{ lang("button.continue") }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+
+        <div class="layout__item lap-and-up-3/10">
+            <aside class="page-side">
+                    {{ modules|raw }}
+            </aside>
+        </div>
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    
+    <!-- PASTE FEATURED SLIDER CODE HERE -->
+
+    <div class="layout">
+        <div class="layout__item lap-and-up-7/10">
+            <main class="page-main">
+                <h1 class="main-heading">
+                    {{ lang("title.index") }}
+                </h1>
+                <p class="main-desc">
+                    {{ index.description|raw }}
+                </p>
+            </main>
+        </div>
+
+        <div class="layout__item lap-and-up-3/10">
+            <aside class="page-side">
+                    {{ modules|raw }}
+            </aside>
+        </div>
+    </div>
+    
+{% endblock %}

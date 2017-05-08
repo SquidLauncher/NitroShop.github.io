@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="layout">
+        <div class="layout__item lap-and-up-7/10">
+            <main class="page-main">
+                <h1 class="main-heading">
+                    {{ lang("title.username") }}
+                </h1>
+                <form method="post">
+                    <div class="text-submit">
+                        <input type="text" name="ign" class="text-input">
+                        <button class="btn" type="submit">
+                            {{ lang("button.continue") }}
+                        </button>
+                    </div>
+                </form>
+            </main>
+        </div>
+
+        <div class="layout__item lap-and-up-3/10">
+            <aside class="page-side">
+                    {{ modules|raw }}
+            </aside>
+        </div>
+    </div>
+
+{% endblock %}
